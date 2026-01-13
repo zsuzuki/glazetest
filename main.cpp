@@ -2,15 +2,21 @@
 #include <iostream>
 #include <string>
 
+struct Stats {
+  int Kills{};
+  int Deaths{};
+};
+
 struct Player {
   std::string Name;
   int Age{};
   std::string Country;
   int Point{};
+  std::vector<Stats> MatchStats;
 };
 
 int main() {
-  Player original{"Alice", 28, "Japan", 1200};
+  Player original{"Alice", 28, "Japan", 1200, {{10, 2}, {8, 3}, {15, 1}}};
 
   std::string json;
   if (auto ec = glz::write_json(original, json); ec) {
@@ -24,7 +30,8 @@ int main() {
     "Name": "Bob",
     "Age": 31,
     "Country": "Canada",
-    "Point": 980
+    "Point": 980,
+    "MatchStats":[{"Kills":9,"Deaths":4}]
   })";
 
   Player parsed{};
@@ -37,6 +44,10 @@ int main() {
   std::cout << "Name=" << parsed.Name << ", Age=" << parsed.Age
             << ", Country=" << parsed.Country << ", Point=" << parsed.Point
             << "\n";
+  for (const auto &stats : parsed.MatchStats) {
+    std::cout << "  Kills=" << stats.Kills << ", Deaths=" << stats.Deaths
+              << "\n";
+  }
 
   return 0;
 }
